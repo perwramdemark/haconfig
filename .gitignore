@@ -2,9 +2,7 @@
 !*.yaml
 !scenes
 !.gitignore
-!*.txt
 !*.conf
-.*txt
 .*conf
 secrets.yaml
 known_devices.yaml
