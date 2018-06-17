@@ -25,8 +25,8 @@ logger:
 
 http:
   api_password: !secret http_password
-#  ssl_certificate: /ssl/fullchain.pem
-#  ssl_key: /ssl/privkey.pem
+  ssl_certificate: /ssl/fullchain.pem
+  ssl_key: /ssl/privkey.pem
   ip_ban_enabled: True
   login_attempts_threshold: 5  
 
@@ -148,13 +148,9 @@ tts:
 group: !include groups.yaml
 automation: !include automations.yaml
 
-zwave:
-  usb_path: /dev/ttyUSB0
-  debug: True
-
 # rfxcom 
 rfxtrx:
-  device: /dev/ttyUSB1
+  device: /dev/ttyUSB0
 
 device_tracker:
   - platform: asuswrt
