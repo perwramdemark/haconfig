@@ -1,0 +1,197 @@
+- action:
+  - alias: Släck lampa
+    data:
+      entity_id: switch.plug2_switch
+    service: homeassistant.turn_off
+  alias: Släck lampa Stringhylla
+  condition:
+  - condition: state
+    entity_id: device_tracker.persiphone
+    state: not_home
+  - condition: state
+    entity_id: device_tracker.fridasiphone
+    state: not_home
+  id: '1503749204356'
+  trigger:
+  - entity_id: device_tracker.persiphone
+    from: home
+    platform: state
+    to: not_home
+  - entity_id: device_tracker.fridasiphone
+    from: home
+    platform: state
+    to: not_home
+- action:
+  - alias: Tänd lampa
+    data:
+      entity_id: switch.plug2_switch
+    service: homeassistant.turn_on
+  alias: Tänd lampa Stringhylla
+  condition:
+  - condition: state
+    entity_id: switch.plug2_switch
+    state: 'off'
+  id: '1503754035515'
+  trigger:
+  - event: sunset
+    offset: -00:50:00
+    platform: sun
+- action:
+  - alias: Notify IOS App
+    data:
+      message: Hugo är hemma!
+    service: notify.parents
+  - alias: Har körts idag
+    data:
+      entity_id: input_boolean.hugo_home_today
+    service: input_boolean.turn_on
+  alias: Hugo kommer hem från skolan
+  condition:
+  - condition: state
+    entity_id: sensor.occasion
+    state: weekday
+  - after: '13:00:00'
+    before: '17:00:00'
+    condition: time
+  - condition: state
+    entity_id: input_boolean.hugo_home_today
+    state: 'off'
+  id: '1503863857605'
+  trigger:
+  - entity_id: device_tracker.hugosiphone
+    from: not_home
+    platform: state
+    to: home
+- action:
+  - alias: Notify IOS App
+    data:
+      message: Tuva är hemma!
+    service: notify.parents
+  - alias: Kör Tuva hem bara en gång per dag
+    data:
+      entity_id: input_boolean.tuva_home_today
+    service: input_boolean.turn_on
+  alias: Tuva kommer hem från skolan
+  condition:
+  - condition: state
+    entity_id: sensor.occasion
+    state: weekday
+  - after: '13:00:00'
+    before: '17:00:00'
+    condition: time
+  - condition: state
+    entity_id: input_boolean.tuva_home_today
+    state: 'off'
+  id: '1503932743203'
+  trigger:
+  - entity_id: device_tracker.tuvasiphone
+    from: not_home
+    platform: state
+    to: home
+- action:
+  - alias: Notify IOS App
+    data:
+      message: '{{ trigger.event.data.description }}'
+    service: notify.parents
+  alias: Nya TV avsnitt
+  condition: []
+  id: '1504122226614'
+  trigger:
+  - event_data: {}
+    event_type: feedreader
+    platform: event
+- action:
+  - alias: Ta bort tuva
+    data:
+      entity_id: input_boolean.tuva_home_today
+    service: input_boolean.turn_off
+  - alias: Ta bort Hugo
+    data:
+      entity_id: input_boolean.hugo_home_today
+    service: input_boolean.turn_off
+  alias: Återställ dagliga körningar
+  condition: []
+  id: '1504123056669'
+  trigger:
+  - at: 01:00
+    platform: time
+- action:
+  - alias: Turn on utebelysning
+    data:
+      entity_id: group.all_lights
+    service: homeassistant.turn_on
+  - data:
+      entity_id: switch.plug2_switch
+    service: homeassistant.turn_on
+  - data:
+      entity_id: switch.utomhus1
+    service: homeassistant.turn_on
+  alias: Tänd alla lampor när solen går ner
+  condition: []
+  id: '1504541259031'
+  trigger:
+  - event: sunset
+    offset: -00:10
+    platform: sun
+  - event_data: {}
+    event_type: lampson_button
+    platform: event
+- action:
+  - alias: Turn off utebelysning
+    data:
+      entity_id: light.utomhus
+    service: homeassistant.turn_off
+  - data:
+      entity_id: switch.utomhus1
+    service: homeassistant.turn_off
+  alias: Släck utebelysning när solen går upp
+  condition: []
+  id: '1504541346758'
+  trigger:
+  - event: sunrise
+    platform: sun
+- action:
+  - alias: Släck lampa String
+    data:
+      entity_id: switch.plug2_switch
+    service: homeassistant.turn_off
+  - alias: Släck lampor inomhus
+    data:
+      entity_id: light.inomhus_2
+    service: homeassistant.turn_off
+  - data:
+      entity_id: light.jul
+    service: homeassistant.turn_off
+  alias: Night button
+  condition: []
+  id: '1504894713502'
+  trigger:
+  - event_data: {}
+    event_type: button_night
+    platform: event
+- action:
+  - data:
+      entity_id: switch.plug2_switch
+    service: homeassistant.turn_on
+  alias: Julgran vardag 06 tänd
+  condition:
+  - condition: state
+    entity_id: sensor.occasion
+    state: weekday
+  id: '1512579698138'
+  trigger:
+  - at: 06:00:00
+    platform: time
+- action:
+  - data:
+      entity_id: switch.plug2_switch
+    service: homeassistant.turn_off
+  alias: Julgran vardag 08 släck
+  condition:
+  - condition: state
+    entity_id: sensor.occasion
+    state: weekday
+  id: '1512579832429'
+  trigger:
+  - at: 08:00:00
+    platform: time

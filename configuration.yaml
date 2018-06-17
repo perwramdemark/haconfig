@@ -1,0 +1,211 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+  # Location required to calculate the time the sun rises and sets
+  latitude: 56.221888
+  longitude: 15.666745
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 55
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: Europe/Stockholm
+
+# Show links to resources in log and frontend
+#introduction:
+
+# Enables the frontend
+frontend:
+
+# Enables configuration UI
+config:
+
+logger:
+  default: error
+
+http:
+  api_password: !secret http_password
+#  ssl_certificate: /ssl/fullchain.pem
+#  ssl_key: /ssl/privkey.pem
+  ip_ban_enabled: True
+  login_attempts_threshold: 5  
+
+# Checks for available updates
+# Note: This component will send some information about your system to
+# the developers to assist with development of Home Assistant.
+# For more information, please see:
+# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
+updater:
+  # Optional, allows Home Assistant developers to focus on popular components.
+  # include_used_components: true
+
+# Discover some devices automatically
+discovery:
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+# Enables support for tracking state changes over time
+#history:
+
+# View all events in a logbook
+#logbook:
+
+# Track the sun
+sun:
+
+alert:
+  kyl:
+    name: Kyl är varm
+    done_message: Kyl är kall
+    entity_id: binary_sensor.fridge_temperature_high
+    repeat:
+      - 45
+      - 60
+      - 180
+    can_acknowledge: True
+    skip_first: True
+    notifiers: parents
+  frys:
+    name: Frys är varm
+    done_message: Frys är kall
+    entity_id: binary_sensor.freezer_temperature_high
+    repeat:
+      - 45
+      - 60
+      - 180
+    can_acknowledge: True
+    skip_first: True
+    notifiers: parents
+
+binary_sensor:
+  - platform: rfxtrx
+
+  - platform: template
+    sensors:
+      fridge_temperature_high:
+        device_class: heat
+        entity_id: sensor.kyl_temperature
+        value_template: '{{ states("sensor.kyl_temperature")|float > 12.0 }}'
+        friendly_name: 'Varm kyl'
+      freezer_temperature_high:
+        device_class: heat
+        entity_id: sensor.frys_temperature
+        value_template: '{{ states("sensor.frys_temperature")|float > -15.0 }}'
+        friendly_name: 'Varm frys'
+
+switch:
+  platform: rfxtrx
+  devices:
+    0b11000638bc0cfe01010f70:
+      name: Utomhus1
+
+sensor:
+  - platform: yr
+  - platform: rfxtrx
+    devices:
+      08500701880000d179:
+        name: Utomhus
+      08500703970080fe79:
+        name: Frys
+      08500705b70080fb79:
+        name: Kyl
+      08500700870000ed79:
+        name: Tvättstuga
+      0a520904a70001093a0179:
+        name: Vind
+        data_type:
+          - Humidity
+          - Temperature
+      0a520904c7000061490369:
+        name: Förråd
+        data_type:      
+          - Humidity
+          - Temperature      
+  - platform: transmission
+    host: 192.168.1.7
+    monitored_variables:
+      - 'current_status'
+      - 'download_speed'
+      - 'upload_speed'
+  - platform: command_line
+    name: Occasion
+    command: "python3 /config/occasion.py"
+  - platform: rest
+    name: Åke status
+    resource: http://localhost:9002/status
+    value_template: '{{ value_json.mowerStatus }}'
+  - platform: rest
+    name: Åke batteri
+    resource: http://localhost:9002/status
+    value_template: '{{ value_json.batteryPercent }}'
+    unit_of_measurement: '%'
+
+# Text to speech
+tts:
+  - platform: google
+
+group: !include groups.yaml
+automation: !include automations.yaml
+
+zwave:
+  usb_path: /dev/ttyUSB0
+  debug: True
+
+# rfxcom 
+rfxtrx:
+  device: /dev/ttyUSB1
+
+device_tracker:
+  - platform: asuswrt
+    host: 192.168.1.1
+    username: admin
+    password: !secret router_password
+    track_new_devices: False
+    protocol: ssh
+
+notify:
+  - name: parents
+    platform: group
+    services:
+      - service: ios_per
+      - service: ios_frida
+
+ios:
+
+zone:
+  name: School
+  latitude: 56.226612
+  longitude: 15.665812
+  icon: mdi:school
+
+zone 2:
+  name: Work
+  latitude: 56.183203
+  longitude: 15.593259
+  radius: 300
+  icon: mdi:worker
+
+feedreader:
+  urls:
+    - http://showrss.info/user/150775.rss?magnets=false&namespaces=false&name=null&quality=hd&re=no
+
+input_boolean:
+  hugo_home_today:
+    name: Has Hugo arrived home from School today?
+    initial: off
+  tuva_home_today:
+    name: Has Tuva arrived home from School today?
+    initial: off
+
+tradfri:
+  host: 192.168.1.9
+
+media_player:
+  - platform: webostv
+    name: TV
+    host: 192.168.1.11
+    turn_on_action:
+      service: persistent_notification.create
+      data:
+        message: "Turn on action"    

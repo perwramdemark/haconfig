@@ -1,0 +1,12 @@
+climate:
+  name: Climate
+  view: no
+  entities:
+    - sensor.forrad_temperature
+    - sensor.frys_temperature
+    - sensor.kyl_temperature
+    - sensor.tvattstuga_temperature
+    - sensor.vind_temperature
+    - sensor.forrad_humidity
+    - sensor.vind_humidity
+    - sensor.utomhus_temperature
