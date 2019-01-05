@@ -5,4 +5,5 @@
 !*.conf
 .*conf
 secrets.yaml
+._secrets.yaml
 known_devices.yaml
