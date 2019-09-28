@@ -89,18 +89,6 @@
     platform: state
     to: home
 - action:
-  - alias: Notify IOS App
-    data:
-      message: '{{ trigger.event.data.description }}'
-    service: notify.parents
-  alias: Nya TV avsnitt
-  condition: []
-  id: '1504122226614'
-  trigger:
-  - event_data: {}
-    event_type: feedreader
-    platform: event
-- action:
   - alias: Ta bort tuva
     data:
       entity_id: input_boolean.tuva_home_today

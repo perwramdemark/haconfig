@@ -122,12 +122,6 @@ sensor:
         data_type:      
           - Humidity
           - Temperature      
-  - platform: transmission
-    host: 192.168.1.7
-    monitored_variables:
-      - 'current_status'
-      - 'download_speed'
-      - 'upload_speed'
   - platform: command_line
     name: Occasion
     command: "python3 /config/occasion.py"
@@ -141,9 +135,12 @@ sensor:
     value_template: '{{ value_json.batteryPercent }}'
     unit_of_measurement: '%'
 
-# Text to speech
-tts:
-  - platform: google
+transmission:
+  host: 192.168.1.7
+  monitored_conditions:
+    - 'current_status'
+    - 'download_speed'
+    - 'upload_speed'
 
 group: !include groups.yaml
 automation: !include automations.yaml
@@ -152,13 +149,18 @@ automation: !include automations.yaml
 rfxtrx:
   device: /dev/ttyUSB0
 
-device_tracker:
-  - platform: asuswrt
-    host: 192.168.1.1
-    username: admin
-    password: !secret router_password
-    track_new_devices: False
-    protocol: ssh
+asuswrt:
+  host: 192.168.1.1 
+  username: admin
+  password: !secret router_password
+
+#device_tracker:
+#  - platform: asuswrt
+#    host: 192.168.1.1
+#    username: admin
+#    password: !secret router_password
+#    track_new_devices: False
+#    protocol: ssh
 
 notify:
   - name: parents
@@ -197,6 +199,8 @@ input_boolean:
 tradfri:
   host: 192.168.1.9
 
+system_health:
+
 media_player:
   - platform: webostv
     name: TV
@@ -204,4 +208,15 @@ media_player:
     turn_on_action:
       service: persistent_notification.create
       data:
-        message: "Turn on action"    
+        message: "Turn on action"
+
+automation old:
+  - alias: Nyhet
+    trigger:
+      event_type: transmission_started_torrent
+      platform: event
+    action:
+      service: notify.parents
+      data_template:
+        title: 'Ny torrent'
+        message: '{{trigger.event.data.name}}'
