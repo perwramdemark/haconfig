@@ -24,7 +24,6 @@ logger:
   default: error
 
 http:
-  api_password: !secret http_password
   ssl_certificate: /ssl/fullchain.pem
   ssl_key: /ssl/privkey.pem
   ip_ban_enabled: True
@@ -196,6 +195,8 @@ tradfri:
   host: 192.168.1.9
 
 system_health:
+
+mobile_app:
 
 media_player:
   - platform: webostv

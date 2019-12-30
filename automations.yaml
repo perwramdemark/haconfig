@@ -138,7 +138,16 @@
   trigger:
   - event: sunrise
     platform: sun
-- action:
+- id: '1504894713502'
+  alias: Night button
+  trigger:
+  - event_data: {}
+    event_type: button_night
+    platform: event
+  - platform: webhook
+    webhook_id: JOSJDIJIWJ87e827ihh93hfgh3ghewugwg
+  condition: []
+  action:
   - alias: Släck lampa String
     data:
       entity_id: switch.plug2_switch
@@ -150,13 +159,6 @@
   - data:
       entity_id: light.jul
     service: homeassistant.turn_off
-  alias: Night button
-  condition: []
-  id: '1504894713502'
-  trigger:
-  - event_data: {}
-    event_type: button_night
-    platform: event
 - action:
   - data:
       entity_id: switch.plug2_switch
