@@ -20,6 +20,10 @@ frontend:
 # Enables configuration UI
 config:
 
+pi_hole:
+  host: 192.168.1.226
+  api_key: e2619ecdc16d1e15c8259751f2ad5e7eae6df1f91222d2c36a86f99a7f18fb61
+
 logger:
   default: error
 
@@ -137,7 +141,6 @@ sensor:
 transmission:
   host: 192.168.1.7
 
-group: !include groups.yaml
 automation: !include automations.yaml
 
 # rfxcom 
@@ -198,14 +201,13 @@ system_health:
 
 mobile_app:
 
-media_player:
-  - platform: webostv
-    name: TV
-    host: 192.168.1.11
-    turn_on_action:
-      service: persistent_notification.create
-      data:
-        message: "Turn on action"
+webostv:
+  name: TV
+  host: 192.168.1.11
+  turn_on_action:
+    service: persistent_notification.create
+    data:
+      message: "Turn on action"
 
 automation old:
   - alias: Nyhet

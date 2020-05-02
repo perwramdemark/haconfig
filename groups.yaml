@@ -1,6 +1,5 @@
 climate:
   name: Climate
-  view: no
   entities:
     - sensor.forrad_temperature
     - sensor.frys_temperature
